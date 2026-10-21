@@ -1,0 +1,3 @@
+company_id,company_name,industry,employees,region,icp_fit,contact_name,contact_role,contact_email,channel,status,last_contacted_at,next_action,notes
+C001,가상제조 A,자동차 부품,120,경기,high,홍길동,구매팀장,sample-a@example.com,cold_email,researched,,,가상 데이터
+C002,가상유통 B,식자재 유통,45,서울,medium,김철수,물류 담당,sample-b@example.com,linkedin,contacted,2026-10-20,회신 확인,가상 데이터

@@ -1,0 +1,2 @@
+interview_id,company_id,interviewed_at,respondent_role,customer_quotes,observed_facts,interviewer_interpretation,problem_type,current_alternative,severity,purchase_trigger,stated_price_wtp,next_action
+I001,C001,2026-10-21,구매팀장,"""긴급 발주가 생기면 엑셀을 다시 다 봐야 해요""",주 1회 이상 엑셀 수작업 확인,발주량 결정이 주요 병목일 가능성,발주량 결정,엑셀 + 담당자 경험,중간 · 검증 필요,긴급 발주 발생,,실제 업무 사례 추가 질문
