@@ -41,3 +41,11 @@ tests/       워크플로 테스트 케이스와 실패 시나리오
 
 - API 키, 고객 개인정보, 실제 인터뷰 원문은 Git에 올리지 않는다.
 - 샘플 데이터는 가상의 데이터만 사용한다.
+
+## 로컬 실행 (n8n)
+
+```bash
+cp .env.example .env   # 최초 1회, N8N_ENCRYPTION_KEY 채우기
+docker compose up -d   # http://localhost:5678
+docker exec n8n n8n import:workflow --input=/workflows/lead-intake.json
+```
