@@ -1,3 +1,31 @@
 company_id,company_name,industry,employees,region,icp_fit,contact_name,contact_role,contact_email,channel,status,last_contacted_at,next_action,notes
-C001,가상제조 A,자동차 부품,120,경기,high,홍길동,구매팀장,sample-a@example.com,cold_email,researched,,,가상 데이터
-C002,가상유통 B,식자재 유통,45,서울,medium,김철수,물류 담당,sample-b@example.com,linkedin,contacted,2026-10-20,회신 확인,가상 데이터
+C001,(가상) 한빛정밀,자동차 부품,120,경기 화성,high,홍길동,구매팀장,c001@example.com,referral,interviewed,2026-10-21,실제 업무 사례 추가 질문,긴급 발주 월 2~3회 언급
+C002,(가상) 대성오토텍,자동차 부품,210,경남 창원,high,김민준,자재 담당,c002@example.com,cold_email,interviewed,2026-10-20,파일럿 범위 제안,ERP MRP 미사용
+C003,(가상) 세진프레스,자동차 부품,85,울산,high,이서연,생산관리팀장,c003@example.com,linkedin,pilot_proposed,2026-10-21,제안서 회신 대기,발주 엑셀 파일 샘플 제공 의사
+C004,(가상) 동아모듈,전자 부품,160,경기 안산,high,박지호,구매 담당,c004@example.com,cold_email,interview_scheduled,2026-10-19,10/23 인터뷰,
+C005,(가상) 미래전장,전자 부품,95,충남 아산,high,최예은,자재팀장,c005@example.com,linkedin,interview_scheduled,2026-10-18,10/24 인터뷰,
+C006,(가상) 삼우하네스,자동차 부품,140,대구,high,정도윤,구매 담당,c006@example.com,cold_email,replied,2026-10-17,인터뷰 일정 조율,
+C007,(가상) 태광금속,금속 가공,70,인천 남동,medium,강하은,공장장,c007@example.com,cold_email,replied,2026-10-16,인터뷰 일정 조율,대표가 직접 발주 결정
+C008,(가상) 신화PCB,전자 부품,230,경기 평택,high,조시우,구매팀장,c008@example.com,linkedin,replied,2026-10-17,자료 요청 응대,도입 사례 요청
+C009,(가상) 우성식품,식품 제조,110,충북 음성,high,윤지아,자재 담당,c009@example.com,cold_email,interviewed,2026-10-15,후속 질문 정리,원자재 폐기 손실 언급
+C010,(가상) 청솔푸드,식품 제조,60,전북 익산,medium,장서준,생산관리 담당,c010@example.com,cold_email,replied,2026-10-16,인터뷰 일정 조율,
+C011,(가상) 한결케미칼,화학 소재,180,충남 서산,medium,임수아,구매 담당,c011@example.com,cold_email,contacted,2026-10-15,후속 메일 발송,
+C012,(가상) 대명사출,플라스틱 사출,75,경기 시흥,high,한예준,자재팀장,c012@example.com,cold_email,contacted,2026-10-15,후속 메일 발송,
+C013,(가상) 성원기계,산업 기계,130,경남 김해,medium,오지유,구매팀장,c013@example.com,linkedin,contacted,2026-10-14,후속 메일 발송,
+C014,(가상) 금강전자,전자 부품,90,경북 구미,high,서준우,자재 담당,c014@example.com,cold_email,contacted,2026-10-14,후속 메일 발송,
+C015,(가상) 제일오토,자동차 부품,150,광주,high,신하린,구매 담당,c015@example.com,cold_email,contacted,2026-10-14,후속 메일 발송,
+C016,(가상) 푸른생활,생활용품 제조,55,경기 김포,medium,권은우,생산관리 담당,c016@example.com,linkedin,contacted,2026-10-13,후속 메일 발송,
+C017,(가상) 영진정공,금속 가공,65,부산 강서,medium,황지민,공장장,c017@example.com,cold_email,contacted,2026-10-13,후속 메일 발송,
+C018,(가상) 동방코스메틱,화장품 제조,120,충북 오송,medium,안채원,구매 담당,c018@example.com,cold_email,contacted,2026-10-13,후속 메일 발송,
+C019,(가상) 서해수산가공,식품 제조,80,충남 보령,medium,송현우,자재 담당,c019@example.com,cold_email,no_response,2026-10-13,채널 변경 검토,후속 메일 2회 무응답
+C020,(가상) 경인다이캐스팅,금속 가공,100,인천 서구,high,류서윤,구매팀장,c020@example.com,cold_email,no_response,2026-10-13,채널 변경 검토,후속 메일 2회 무응답
+C021,(가상) 나래텍스,섬유 소재,140,경북 경산,medium,,,,,researched,,담당자 탐색,
+C022,(가상) 은하테크,전자 부품,200,경기 화성,high,,,,,researched,,담당자 탐색,
+C023,(가상) 보광산업,자동차 부품,170,충남 천안,high,,,,,researched,,담당자 탐색,
+C024,(가상) 한울제과,식품 제조,95,경기 이천,high,,,,,researched,,담당자 탐색,
+C025,(가상) 선진패키징,포장재 제조,60,경기 파주,medium,,,,,researched,,담당자 탐색,
+C026,(가상) 진흥베어링,산업 기계,110,경남 창원,medium,,,,,researched,,담당자 탐색,
+C027,(가상) 대한중공업,조선 기자재,1800,경남 거제,low,,,,,excluded,,,대기업 · 자체 SCM 보유
+C028,(가상) 소담공방,생활용품 제조,12,서울 성수,low,,,,,excluded,,,직원 20명 이하
+C029,(가상) 백두주물,금속 가공,40,대구,low,,,,,excluded,,,발주를 수기 장부로 관리
+C030,(가상) 해오름유통,식자재 유통,45,서울,low,,,,,excluded,,,제조사 아님 (유통)

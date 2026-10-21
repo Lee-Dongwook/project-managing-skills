@@ -32,6 +32,11 @@ workflows/   n8n에서 내보낸 워크플로 JSON
 tests/       워크플로 테스트 케이스와 실패 시나리오
 ```
 
+## 기업 접촉 상태 (`data/sample-companies.csv`의 `status`)
+
+`researched` → `contacted` → `replied` → `interview_scheduled` → `interviewed` → `pilot_proposed`
+그 외: `no_response` (후속 연락에도 무응답), `excluded` (ICP 제외 조건에 해당)
+
 ## 데이터 원칙
 
 - API 키, 고객 개인정보, 실제 인터뷰 원문은 Git에 올리지 않는다.
