@@ -1,0 +1,205 @@
+{
+  "name": "Workflow A — 리드 수집 및 CRM 동기화",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "id": "95776a7e-1794-4bbd-ba0b-7eb7c3649099",
+      "webhookId": "94c7ade2-6bb3-4f12-9db3-5b1aeea79da2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 필수 필드 확인 + 값 정리 (이메일은 소문자·공백 제거)\nconst EMAIL = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nconst str = v => String(v ?? '').trim();\n\nreturn $input.all().map(({ json }) => {\n  const b = json.body ?? {};\n  const lead = {\n    company_name: str(b.company_name),\n    industry: str(b.industry),\n    employees: Number(b.employees) || null,\n    region: str(b.region),\n    contact_name: str(b.contact_name),\n    contact_role: str(b.contact_role),\n    contact_email: str(b.contact_email).toLowerCase(),\n    channel: str(b.channel),\n  };\n  const errors = [];\n  if (!lead.company_name) errors.push('company_name 누락');\n  if (!lead.contact_email) errors.push('contact_email 누락');\n  else if (!EMAIL.test(lead.contact_email)) errors.push('contact_email 형식 오류');\n  return { json: { valid: errors.length === 0, errors, lead, received_at: new Date().toISOString() } };\n});"
+      },
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "id": "b1817dd5-4ec4-4344-ac7e-e54c9d3893eb"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "3d240d01-7505-4327-b0a3-0760d67c34fb",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Is Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "id": "ea53335d-6d89-4f2a-9002-86ce7116d1e9"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 기업은 정규화한 회사명, 연락처는 이메일 기준으로 중복 확인 후 저장\n// ponytail: 워크플로 static data를 저장소로 사용. 실제 운영 시 CRM/DB 노드로 교체\nconst db = $getWorkflowStaticData('global');\ndb.companies ??= {};\ndb.contacts ??= {};\nconst companyKey = name => name.replace(/\\(주\\)|주식회사|\\s/g, '').toLowerCase();\nconst filled = obj => Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== '' && v !== null));\n\nreturn $input.all().map(({ json: { lead } }) => {\n  const now = new Date().toISOString();\n  const key = companyKey(lead.company_name);\n  const { contact_name, contact_role, contact_email, channel, ...companyFields } = lead;\n\n  if (!db.companies[key]) {\n    const id = 'C' + String(Object.keys(db.companies).length + 1).padStart(3, '0');\n    db.companies[key] = { company_id: id, created_at: now };\n  }\n  const company = Object.assign(db.companies[key], filled(companyFields), { updated_at: now });\n\n  const existing = db.contacts[contact_email];\n  const contact = {\n    status: 'researched',\n    created_at: now,\n    ...existing,\n    ...filled({ contact_name, contact_role, contact_email, channel }),\n    company_id: company.company_id,\n    updated_at: now,\n  };\n  db.contacts[contact_email] = contact;\n\n  const action = existing ? 'updated' : 'created';\n  const next_action = existing ? '기존 리드 이력 확인' : '담당자 배정 및 첫 연락';\n  return { json: { action, company, contact, next_action } };\n});"
+      },
+      "name": "Deduplicate & Upsert Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, -100],
+      "id": "ef4f56e6-2a4f-4cc4-a3bb-402d76a6bc82"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "gtm-leads",
+          "mode": "name"
+        },
+        "text": "=[{{ $json.action === \"created\" ? \"신규 리드\" : \"리드 갱신\" }}] {{ $json.company.company_name }} · {{ $json.contact.contact_name }} ({{ $json.contact.contact_role }})\n다음 액션: {{ $json.next_action }}",
+        "otherOptions": {}
+      },
+      "name": "Notify",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [880, -100],
+      "id": "4a8463e6-c629-4269-b085-cc6beeb8e093",
+      "disabled": true,
+      "notes": "Slack 자격 증명 연결 후 활성화. 비활성 상태에서는 데이터만 통과시킨다."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, action: $('Deduplicate & Upsert Lead').item.json.action, company_id: $('Deduplicate & Upsert Lead').item.json.company.company_id }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1100, -100],
+      "id": "c65b4840-0ab1-4e88-a49d-18995003cd51"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 검증 실패 입력을 오류 로그에 기록 (최근 100건 유지)\nconst db = $getWorkflowStaticData('global');\ndb.errors ??= [];\nreturn $input.all().map(({ json }) => {\n  const entry = { at: json.received_at, errors: json.errors, input: json.lead };\n  db.errors.push(entry);\n  if (db.errors.length > 100) db.errors.splice(0, db.errors.length - 100);\n  return { json: entry };\n});"
+      },
+      "name": "Log Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 100],
+      "id": "d81db002-57e2-4525-ada6-f7fe9cadd654"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, errors: $json.errors }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 100],
+      "id": "0213479b-6b90-48fa-bf58-bb2372bdb426"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Is Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Valid?": {
+      "main": [
+        [
+          {
+            "node": "Deduplicate & Upsert Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deduplicate & Upsert Lead": {
+      "main": [
+        [
+          {
+            "node": "Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Error": {
+      "main": [
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
